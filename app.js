@@ -1,9 +1,3 @@
-/**
- * ZERO WASTE - ZERO HUNGER
- * Smart India Hackathon 2025 | Team Clever Cast (ID: 145830)
- * Core Application Engine & Reactive State Controller
- */
-
 (function () {
   'use strict';
 
