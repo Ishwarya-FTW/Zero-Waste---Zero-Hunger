@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zero Waste – Zero Hunger | Smart India Hackathon 2025</title>
+  <meta name="description" content="Dual-stream smart food rescue and biomethanation routing platform. Problem Statement SIH26195 - Student Innovation (Clean & Green Technology). Team Clever Cast.">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet GIS CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            forest: {
+              900: '#0a2518',
+              800: '#133e29',
+              700: '#1b5e3b',
+              600: '#257a4e',
+              500: '#349b64'
+            },
+            sprout: {
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Bespoke Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen flex flex-col bg-[#F7F9F6] text-slate-800 antialiased">
+
+  <!-- TOP INSTITUTIONAL / HACKATHON STRIP -->
+  <header class="gov-strip py-1.5 px-4">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded text-[0.7rem] font-bold border border-emerald-800/60">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> SIH 2025 OFFICIAL ENTRY
+        </span>
+        <span class="text-slate-300 font-medium">Problem Statement: <strong>SIH26195</strong> (Student Innovation)</span>
+        <span class="hidden md:inline text-slate-500">|</span>
+        <span class="hidden md:inline text-slate-300">Theme: <strong>Clean & Green Technology</strong></span>
+        <span class="hidden md:inline text-slate-500">|</span>
+        <span class="hidden lg:inline text-slate-300">Team: <strong>Clever Cast</strong> (ID: 145830)</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-400">
+        <span class="hidden sm:inline">Aligned with <strong>Swachh Bharat Urban</strong> & <strong>GOBARdhan</strong></span>
+        <span class="inline-flex items-center gap-1 text-emerald-400 font-mono text-[0.7rem]">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span> ENGINE ONLINE
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP BAR & BRAND -->
+  <div class="header-glass sticky top-0 z-30 shadow-sm border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-emerald-800 text-white flex items-center justify-center font-bold text-lg shadow-sm border border-emerald-700">
+          ♻️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 leading-none">
+              ZERO WASTE – ZERO HUNGER
+            </h1>
+            <span class="bg-amber-100 text-amber-800 text-[0.65rem] font-bold px-1.5 py-0.5 rounded border border-amber-300">
+              DUAL-STREAM
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 font-medium mt-0.5">
+            “Fit to Eat → Feed People &nbsp;|&nbsp; Waste → Generate Energy”
+          </p>
+        </div>
+      </div>
+
+      <!-- Live Quick Stats Bar -->
+      <div class="flex items-center gap-3 sm:gap-6 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs">
+        <div>
+          <span class="text-slate-400 uppercase text-[0.65rem] font-bold block">Live Rescues</span>
+          <span id="statActiveDonations" class="font-bold text-slate-900 text-sm tabular-numbers">4</span>
+        </div>
+        <div class="w-px h-6 bg-slate-200"></div>
+        <div>
+          <span class="text-slate-400 uppercase text-[0.65rem] font-bold block">Meals Saved</span>
+          <span id="statMealsServed" class="font-bold text-emerald-700 text-sm tabular-numbers">42,850</span>
+        </div>
+        <div class="w-px h-6 bg-slate-200"></div>
+        <div>
+          <span class="text-slate-400 uppercase text-[0.65rem] font-bold block">Biogas Yield</span>
+          <span id="statBiogasGenerated" class="font-bold text-amber-700 text-sm tabular-numbers">3,420 m³</span>
+        </div>
+        <div class="w-px h-6 bg-slate-200 hidden md:block"></div>
+        <div class="hidden md:block">
+          <span class="text-slate-400 uppercase text-[0.65rem] font-bold block">CO₂e Avoided</span>
+          <span id="statCo2Avoided" class="font-bold text-slate-800 text-sm tabular-numbers">7,840 kg</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIMARY TABS NAVIGATION -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 overflow-x-auto flex border-t border-slate-100">
+      <nav class="flex gap-1 py-1" aria-label="Tabs">
+        <button class="nav-tab-btn active" data-tab="dispatch-map">
+          <span>🗺️</span> Live Rescue Map & Feed
+        </button>
+        <button class="nav-tab-btn" data-tab="donor-portal">
+          <span>🍲</span> Post Surplus Food (Donor)
+        </button>
+        <button class="nav-tab-btn" data-tab="routing-simulator">
+          <span>⚙️</span> Dual-Stream Routing Engine
+        </button>
+        <button class="nav-tab-btn" data-tab="biogas-telemetry">
+          <span>⚡</span> Biogas & GOBARdhan Plants
+        </button>
+        <button class="nav-tab-btn" data-tab="impact-calculator">
+          <span>📊</span> Impact & ESG Calculator
+        </button>
+        <button class="nav-tab-btn" data-tab="sih-dossier">
+          <span>📑</span> SIH 2025 Tech Dossier
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: LIVE RESCUE MAP & DISPATCH FEED -->
+    <!-- ========================================================================= -->
+    <div id="dispatch-map" class="tab-pane space-y-6">
+      <!-- Section Header -->
+      <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div>
+          <div class="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+            <span>●</span> Real-time Geospatial Dispatch Engine
+          </div>
+          <h2 class="text-xl font-bold text-slate-900 mt-1">Autonomous Food Rescue & Waste Routing Grid</h2>
+          <p class="text-xs text-slate-600">
+            Monitoring food donors, volunteer NGO couriers, and municipal biomethanation digesters across urban clusters.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="window.switchTab('donor-portal')" class="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+            <span>+</span> Post Surplus Food Now
+          </button>
+          <button onclick="window.switchTab('routing-simulator')" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold border border-slate-300 transition">
+            Simulate Algorithmic Flow →
+          </button>
+        </div>
+      </div>
+
+      <!-- Map + Controls Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left: Interactive Map Container (7 cols) -->
+        <div class="lg:col-span-7 space-y-3">
+          <!-- Filter Buttons Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-100 p-2 rounded-lg border border-slate-200 text-xs">
+            <span class="font-bold text-slate-600 text-[0.7rem] uppercase tracking-wider pl-1">Map Filter:</span>
+            <div class="flex flex-wrap gap-1">
+              <button class="map-filter-btn px-2.5 py-1 rounded font-semibold transition bg-emerald-800 text-white" data-filter="all">
+                All Locations
+              </button>
+              <button class="map-filter-btn px-2.5 py-1 rounded font-semibold transition bg-white text-slate-700 border border-slate-200" data-filter="urgent">
+                Urgent Surplus (&lt;2h)
+              </button>
+              <button class="map-filter-btn px-2.5 py-1 rounded font-semibold transition bg-white text-slate-700 border border-slate-200" data-filter="hunger">
+                Zero Hunger (NGO Active)
+              </button>
+              <button class="map-filter-btn px-2.5 py-1 rounded font-semibold transition bg-white text-slate-700 border border-slate-200" data-filter="biogas">
+                Biogas Plants (Zero Waste)
+              </button>
+            </div>
+          </div>
+
+          <!-- Leaflet Map Container -->
+          <div class="relative">
+            <div id="dispatchMap"></div>
+            <!-- Legend overlay -->
+            <div class="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-sm p-3 rounded-lg shadow-md border border-slate-200 text-[0.72rem] space-y-1.5 pointer-events-auto">
+              <div class="font-bold text-slate-700 uppercase tracking-wider text-[0.65rem] border-b border-slate-200 pb-1">
+                Active Map Legend
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-amber-500 border border-white inline-block"></span>
+                <span>Urgent Food Listing (Awaiting Pick)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-sky-600 border border-white inline-block"></span>
+                <span>NGO Fleet En-Route (Zero Hunger)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-orange-600 border border-white inline-block"></span>
+                <span>Auto-Rerouted to Biogas (Uncollected)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-emerald-700 border border-white inline-block"></span>
+                <span>Biomethanation / Fertilizer Plant</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Municipal Telemetry Banner -->
+          <div class="bg-emerald-900 text-emerald-100 p-3 rounded-lg flex items-center justify-between text-xs border border-emerald-800">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span><strong>Pilot Hub Status:</strong> Greater Chennai & Kanchipuram Belt &bull; 4 Biomethanizers Synced</span>
+            </div>
+            <span class="font-mono text-[0.7rem] bg-emerald-950 px-2 py-0.5 rounded text-emerald-300">
+              Avg Pickup Response: 18.4 mins
+            </span>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Dispatch Feed (5 cols) -->
+        <div class="lg:col-span-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+              <span>📋</span> Active Food Rescue Listings
+            </h3>
+            <span class="text-xs text-slate-500">Auto-updates every 30s</span>
+          </div>
+
+          <!-- Dynamic Listings Container -->
+          <div id="donationListContainer" class="space-y-3 max-h-[570px] overflow-y-auto pr-1">
+            <!-- Populated via app.js -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: DONOR PORTAL & ML SPOILAGE PREDICTION -->
+    <!-- ========================================================================= -->
+    <div id="donor-portal" class="tab-pane hidden space-y-6">
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm mb-6">
+          <div class="border-b border-slate-200 pb-4 mb-5">
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 uppercase tracking-wider">
+              Food Donor Station &bull; Slide 2 Implementation
+            </span>
+            <h2 class="text-xl font-bold text-slate-900 mt-1">Post Surplus Edible Food</h2>
+            <p class="text-xs text-slate-600 mt-0.5">
+              Wedding halls, hostels, corporate caterers, and restaurants: Enter surplus quantity and cooking details. Our machine learning engine determines the safe human consumption threshold and coordinates immediate pickup.
+            </p>
+          </div>
+
+          <form id="surplusPostForm" class="space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Donor Establishment Name *</label>
+                <input type="text" id="postDonorName" required placeholder="e.g. Sri Krishna Kalyana Mandapam" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Establishment Category *</label>
+                <select id="postDonorType" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                  <option value="Marriage / Banquet Hall">Marriage / Banquet Hall</option>
+                  <option value="College / University Mess">College / University Mess</option>
+                  <option value="Corporate Tech Park Cafeteria">Corporate Tech Park Cafeteria</option>
+                  <option value="Hotel & Restaurant Kitchen">Hotel & Restaurant Kitchen</option>
+                  <option value="Religious / Temple Trust">Religious / Temple Trust</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Food Item Details & Preparation Description *</label>
+                <input type="text" id="postFoodItems" required placeholder="e.g. 150 Servings Vegetable Biryani, Curd Rice, Dal Fry" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Estimated Servings (Persons) *</label>
+                <input type="number" id="postServings" required min="10" max="2000" value="150" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              </div>
+            </div>
+
+            <!-- Parameters that feed into ML Spoilage Model -->
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-xs font-bold text-slate-800 uppercase tracking-wide">🔬 Spoilage & Risk Model Parameters</span>
+                <span class="text-[0.65rem] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">Auto-Calculates Safe Window</span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-medium text-slate-600 mb-1">Food Category & Moisture</label>
+                  <select id="postFoodType" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded bg-white">
+                    <option value="rice_curry">Cooked Rice / Gravies (High Moisture)</option>
+                    <option value="breads_dry">Chapatis / Rotis / Dry Breads (Low Moisture)</option>
+                    <option value="sweets_dairy">Milk Sweets / Dairy Gravies (Perishable)</option>
+                    <option value="raw_produce">Raw Cut Vegetables / Fruits</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-slate-600 mb-1">Hours Elapsed Since Preparation</label>
+                  <input type="number" id="postPrepTime" step="0.5" min="0.5" max="10" value="1.5" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded bg-white">
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-slate-600 mb-1">Packaging & Storage State</label>
+                  <select id="postStorage" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded bg-white">
+                    <option value="ambient">Covered Steel Vessels (Ambient 31°C)</option>
+                    <option value="insulated_warmer">Thermal Insulated Hot Warmers</option>
+                    <option value="refrigerated">Cold Storage / Chilled (&lt;8°C)</option>
+                    <option value="uncovered_ambient">Uncovered Open Trays (Exposed)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Live Dynamic Spoilage Feedback Box -->
+              <div class="mt-4 bg-white p-3.5 rounded-lg border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <div class="text-[0.7rem] uppercase font-bold text-slate-400">Predicted Safe Consumption Window</div>
+                  <div id="spoilageGaugeHours" class="text-xl font-extrabold text-slate-900 tabular-numbers">
+                    3.0 hrs
+                  </div>
+                </div>
+                <div>
+                  <div class="text-[0.7rem] uppercase font-bold text-slate-400 mb-0.5">Algorithmic Risk Category</div>
+                  <div id="spoilageRiskBadge" class="badge-status badge-green">
+                    FRESH & SAFE (ZERO HUNGER QUALIFIED)
+                  </div>
+                </div>
+                <div class="w-full text-xs text-slate-600 pt-2 border-t border-slate-100 flex items-start gap-2">
+                  <span id="spoilageAdviceText">
+                    ✓ High quality edible surplus. Matched to nearby shelter homes, orphanages, and community kitchens.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Cluster Hub Location *</label>
+                <select id="postLocation" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                  <option value="t_nagar">Chennai - T. Nagar Commercial Hub</option>
+                  <option value="guindy">Chennai - Guindy Industrial Belt</option>
+                  <option value="vandalur">Chennai - Vandalur / Kelambakkam Belt</option>
+                  <option value="taramani">Chennai - OMR / Taramani IT Corridor</option>
+                  <option value="pallavaram">Chennai - Pallavaram / Airport Hub</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Contact Coordinator Phone (for automated IVR) *</label>
+                <input type="tel" required value="+91 98401 54321" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono">
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <span class="text-xs text-slate-500">
+                Data logged securely in PostgreSQL PostGIS &bull; Alerts dispatched via Twilio / Exotel
+              </span>
+              <button type="submit" class="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold rounded-lg shadow transition">
+                Submit Surplus & Trigger Dispatch →
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: DUAL-STREAM ROUTING ENGINE SIMULATOR (SLIDE 3) -->
+    <!-- ========================================================================= -->
+    <div id="routing-simulator" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
+          <div>
+            <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 uppercase tracking-wider">
+              Technical Architecture &bull; Slide 3 Flowchart Simulation
+            </span>
+            <h2 class="text-xl font-bold text-slate-900 mt-1">Autonomous Dual-Stream Routing Engine</h2>
+            <p class="text-xs text-slate-600">
+              Interactive test bench of the decision tree: Safe food is routed to feed needy people; decaying or uncollected food is automatically diverted to anaerobic digesters.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="btnSimulateHungerStream" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow transition flex items-center gap-1.5">
+              <span>▶</span> Run "Zero Hunger" Flow (Accepted)
+            </button>
+            <button id="btnSimulateWasteStream" class="px-3 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs font-bold shadow transition flex items-center gap-1.5">
+              <span>▶</span> Run "Zero Waste" Flow (Expired / Uncollected)
+            </button>
+            <button id="btnResetSimulation" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium border border-slate-300">
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Flowchart Visualizer Nodes (Direct mapping to Slide 3) -->
+        <div class="space-y-6 max-w-4xl mx-auto">
+          
+          <!-- Step 1: Donor Input -->
+          <div id="sim-step-1" class="pipeline-step-card text-center max-w-md mx-auto border-emerald-300">
+            <div class="text-[0.68rem] font-bold text-emerald-700 uppercase tracking-wider mb-1">Step 1 &bull; Ingestion</div>
+            <h4 class="text-sm font-bold text-slate-900">Donor Uploads Excess Food</h4>
+            <div class="text-xs text-slate-500 mt-1">Flutter / React Native Mobile App &bull; <code class="text-xs bg-slate-100 px-1 py-0.5 rounded">POST /api/food</code></div>
+          </div>
+
+          <div class="w-0.5 h-6 bg-slate-300 mx-auto"></div>
+
+          <!-- Step 2: Backend Validation -->
+          <div id="sim-step-2" class="pipeline-step-card text-center max-w-md mx-auto border-blue-300">
+            <div class="text-[0.68rem] font-bold text-blue-700 uppercase tracking-wider mb-1">Step 2 &bull; Storage & Validation</div>
+            <h4 class="text-sm font-bold text-slate-900">Backend Validates & Stores</h4>
+            <div class="text-xs text-slate-500 mt-1">Node.js / Express API &bull; PostgreSQL PostGIS DB (qty, time, expiry, geo-coords)</div>
+          </div>
+
+          <div class="w-0.5 h-6 bg-slate-300 mx-auto"></div>
+
+          <!-- Step 3: Smart Matching Engine -->
+          <div id="sim-step-3" class="pipeline-step-card text-center max-w-md mx-auto border-purple-300">
+            <div class="text-[0.68rem] font-bold text-purple-700 uppercase tracking-wider mb-1">Step 3 &bull; Intelligence</div>
+            <h4 class="text-sm font-bold text-slate-900">Smart Matching Engine</h4>
+            <div class="text-xs text-slate-500 mt-1">Google Maps Distance API + ML Spoilage & Microbial Decay Model</div>
+          </div>
+
+          <div class="w-0.5 h-6 bg-slate-300 mx-auto"></div>
+
+          <!-- Step 4: Automated Notification -->
+          <div id="sim-step-4" class="pipeline-step-card text-center max-w-md mx-auto border-amber-300">
+            <div class="text-[0.68rem] font-bold text-amber-700 uppercase tracking-wider mb-1">Step 4 &bull; Multi-Channel Dispatch</div>
+            <h4 class="text-sm font-bold text-slate-900">Automated Notification Service</h4>
+            <div class="text-xs text-slate-500 mt-1">Twilio / Exotel Voice Automated IVR Call + SMS Gateway + Firebase FCM Push</div>
+          </div>
+
+          <div class="w-0.5 h-6 bg-slate-300 mx-auto"></div>
+
+          <!-- Decision Fork: Accepted in Time? -->
+          <div class="bg-slate-900 text-white p-4 rounded-xl text-center max-w-lg mx-auto shadow-md border border-slate-700 relative">
+            <div class="text-[0.65rem] font-bold text-amber-400 uppercase tracking-wider mb-1">Decisional Condition (Cron Job)</div>
+            <h3 class="text-base font-bold">Accepted within Safe Consumption Window?</h3>
+            <div class="text-xs text-slate-300 mt-1">
+              Active cron job evaluates expiry countdown and volunteer courier geofence
+            </div>
+          </div>
+
+          <!-- The Two Diverging Branches -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+            
+            <!-- BRANCH A: ZERO HUNGER -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-center gap-2 text-emerald-700 font-bold text-xs uppercase tracking-wider">
+                <span>↓ YES (ACCEPTED IN TIME)</span>
+              </div>
+
+              <div id="sim-step-5a" class="pipeline-step-card border-emerald-300 bg-emerald-50/40">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[0.68rem] font-bold text-emerald-800 uppercase tracking-wide">Stream A &bull; Rescue</span>
+                  <span class="text-xs font-bold text-emerald-700">✓ ZERO HUNGER</span>
+                </div>
+                <h4 class="text-sm font-bold text-slate-900">Pickup & Delivery Tracking</h4>
+                <p class="text-xs text-slate-600 mt-1">
+                  Geolocation API streams volunteer transit; real-time temperature logs ensure food hygiene until handover at shelter home.
+                </p>
+              </div>
+
+              <div id="sim-step-6a" class="pipeline-step-card border-emerald-400 bg-emerald-100/50 text-center">
+                <span class="text-xs font-extrabold text-emerald-900">OUTCOME: SAFE SURPLUS FEEDS HUNGRY COMMUNITIES</span>
+                <p class="text-[0.75rem] text-emerald-800 mt-1">Zero hunger metric incremented &bull; Beneficiary receipt signed</p>
+              </div>
+            </div>
+
+            <!-- BRANCH B: ZERO WASTE (BIOGAS / FERTILIZER) -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-center gap-2 text-orange-700 font-bold text-xs uppercase tracking-wider">
+                <span>↓ NO / EXPIRED (AUTO-FAILSAFE)</span>
+              </div>
+
+              <div id="sim-step-5b" class="pipeline-step-card border-orange-300 bg-orange-50/40">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[0.68rem] font-bold text-orange-800 uppercase tracking-wide">Stream B &bull; Valorization</span>
+                  <span class="text-xs font-bold text-orange-700">♻️ ZERO WASTE</span>
+                </div>
+                <h4 class="text-sm font-bold text-slate-900">Waste Routing Service</h4>
+                <p class="text-xs text-slate-600 mt-1">
+                  Auto-selects nearest municipal Biomethanation Digester or Organic Fertilizer Plant via Partner-Match API.
+                </p>
+              </div>
+
+              <div id="sim-step-6b" class="pipeline-step-card border-orange-400 bg-orange-100/50 text-center">
+                <span class="text-xs font-extrabold text-orange-900">OUTCOME: GENERATES CLEAN BIOGAS & ORGANIC BIO-MANURE</span>
+                <p class="text-[0.75rem] text-orange-800 mt-1">Redirected to Anaerobic Digester &bull; Methane bottled / Compost bagged</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Impact Analytics Summary Node -->
+          <div class="w-0.5 h-6 bg-slate-300 mx-auto"></div>
+          <div class="pipeline-step-card text-center max-w-lg mx-auto border-slate-300 bg-slate-50">
+            <div class="text-[0.68rem] font-bold text-slate-500 uppercase tracking-wider mb-1">Slide 3 Output Layer</div>
+            <h4 class="text-sm font-bold text-slate-900">Impact Analytics Dashboard</h4>
+            <div class="text-xs text-slate-600 mt-1">
+              Aggregation Service calculates: Meals saved, kg food diverted from landfills, and cubic meters of clean biomethane fuel synthesized.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: BIOGAS & GOBARDHAN FACILITY NETWORK -->
+    <!-- ========================================================================= -->
+    <div id="biogas-telemetry" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
+          <div>
+            <div class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              <span>♻️</span> Slide 4 & 6 Integration &bull; GOBARdhan & Biomethanation Plants
+            </div>
+            <h2 class="text-xl font-bold text-slate-900 mt-1">Decentralized Waste-to-Energy Infrastructure</h2>
+            <p class="text-xs text-slate-600">
+              Live telemetry from contracted anaerobic digestion plants, organic composting facilities, and university micro-reactors.
+            </p>
+          </div>
+
+          <a href="https://gobardhan.sbm.gov.in/plants-list" target="_blank" rel="noreferrer" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+            Official GOBARdhan Registry ↗
+          </a>
+        </div>
+
+        <!-- Live Plant Grid -->
+        <div id="biogasPlantListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Populated by app.js -->
+        </div>
+
+        <!-- Scientific Process Box -->
+        <div class="mt-6 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs text-slate-700 leading-relaxed">
+          <h4 class="font-bold text-slate-900 mb-1 flex items-center gap-1.5">
+            <span>🔬</span> Scientific Biomethanation Mechanism (CSIR-IICT High-Rate AGR Standard)
+          </h4>
+          <p>
+            When food waste degrades in open dumps, it generates fugitive methane ($CH_4$), a greenhouse gas 28× more potent than $CO_2$. By routing uncollected organic waste to sealed anaerobic digesters, methanogenic bacteria convert volatile fatty acids into enriched biogas (60–65% $CH_4$, 35% $CO_2$). The effluent bio-slurry is separated into nitrogen-rich liquid bio-fertilizer for local farmers and urban gardens.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 5: IMPACT & ESG CALCULATOR -->
+    <!-- ========================================================================= -->
+    <div id="impact-calculator" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div class="border-b border-slate-200 pb-4 mb-6">
+          <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 uppercase tracking-wider">
+            Slide 5 &bull; Impact & Viability Modeler
+          </span>
+          <h2 class="text-xl font-bold text-slate-900 mt-1">Interactive Environmental & Social Impact Calculator</h2>
+          <p class="text-xs text-slate-600">
+            Adjust the surplus food volume to calculate instant metrics verified against CSIR-IICT and GOBARdhan engineering coefficients.
+          </p>
+        </div>
+
+        <!-- Slider Control -->
+        <div class="max-w-2xl mx-auto bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Surplus / Waste Food Handled</label>
+            <span id="calcKgDisplay" class="text-lg font-extrabold text-emerald-800 font-mono">250 kg</span>
+          </div>
+          <input type="range" id="calcKgSlider" min="20" max="5000" step="10" value="250" class="w-full mb-3">
+          <div class="flex justify-between text-[0.7rem] text-slate-400 font-mono">
+            <span>20 kg (Small Cafeteria)</span>
+            <span>1,000 kg (Banquet Hall)</span>
+            <span>5,000 kg (Ward Cluster)</span>
+          </div>
+        </div>
+
+        <!-- Calculated Metrics Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          
+          <!-- Metric 1: Meals Fed -->
+          <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50">
+            <div class="text-[0.7rem] font-bold text-emerald-800 uppercase tracking-wider mb-1">
+              Zero Hunger Potential
+            </div>
+            <div id="calcMeals" class="text-2xl font-extrabold text-slate-900 tabular-numbers">
+              625
+            </div>
+            <div class="text-xs text-slate-600 mt-1">
+              Hot meals served if rescued within safe consumption window (0.4 kg/meal).
+            </div>
+          </div>
+
+          <!-- Metric 2: Biogas Synthesized -->
+          <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50">
+            <div class="text-[0.7rem] font-bold text-amber-800 uppercase tracking-wider mb-1">
+              Biogas Produced (Anaerobic)
+            </div>
+            <div id="calcBiogas" class="text-2xl font-extrabold text-amber-900 tabular-numbers">
+              22.0 m³
+            </div>
+            <div class="text-xs text-slate-600 mt-1">
+              Clean combustible methane generated via anaerobic digester (0.088 m³/kg).
+            </div>
+          </div>
+
+          <!-- Metric 3: Commercial LPG Saved -->
+          <div class="p-4 rounded-xl border border-orange-200 bg-orange-50/50">
+            <div class="text-[0.7rem] font-bold text-orange-800 uppercase tracking-wider mb-1">
+              LPG Equivalence
+            </div>
+            <div id="calcLpg" class="text-2xl font-extrabold text-orange-900 tabular-numbers">
+              0.7 Cylinders
+            </div>
+            <div class="text-xs text-slate-600 mt-1">
+              Offset against conventional 14.2 kg domestic cooking gas cylinders.
+            </div>
+          </div>
+
+          <!-- Metric 4: Landfill CO2e Avoided -->
+          <div class="p-4 rounded-xl border border-slate-300 bg-slate-50">
+            <div class="text-[0.7rem] font-bold text-slate-700 uppercase tracking-wider mb-1">
+              Fugitive Methane / CO₂e Avoided
+            </div>
+            <div id="calcCo2" class="text-2xl font-extrabold text-slate-900 tabular-numbers">
+              463 kg
+            </div>
+            <div class="text-xs text-slate-600 mt-1">
+              Eliminated open dump landfill emissions (1.85 kg CO₂e / kg food).
+            </div>
+          </div>
+
+          <!-- Metric 5: Organic Bio-Compost -->
+          <div class="p-4 rounded-xl border border-emerald-300 bg-emerald-50">
+            <div class="text-[0.7rem] font-bold text-emerald-900 uppercase tracking-wider mb-1">
+              High-Grade Bio-Manure
+            </div>
+            <div id="calcCompost" class="text-2xl font-extrabold text-emerald-950 tabular-numbers">
+              63 kg
+            </div>
+            <div class="text-xs text-slate-600 mt-1">
+              Soil-enriching organic solid cake for agricultural rejuvenation.
+            </div>
+          </div>
+
+          <!-- Metric 6: Swachh Bharat Alignment -->
+          <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/40 flex flex-col justify-between">
+            <div>
+              <div class="text-[0.7rem] font-bold text-blue-900 uppercase tracking-wider mb-1">
+                Policy Alignment
+              </div>
+              <div class="text-sm font-bold text-blue-950">
+                Swachh Bharat Urban 2.0 & UN SDGs
+              </div>
+              <div class="text-xs text-slate-600 mt-1">
+                Zero Hunger (SDG 2), Affordable Clean Energy (SDG 7), Climate Action (SDG 13).
+              </div>
+            </div>
+            <span class="text-[0.65rem] text-blue-700 font-mono mt-2">Verified Municipal Standard</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 6: SIH 2025 TECHNICAL DOSSIER & RESEARCH CITATIONS (SLIDE 1-6) -->
+    <!-- ========================================================================= -->
+    <div id="sih-dossier" class="tab-pane hidden space-y-6">
+      
+      <!-- Hackathon Project Specs -->
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
+          <div>
+            <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 uppercase tracking-wider">
+              Smart India Hackathon 2025 Submission Dossier
+            </span>
+            <h2 class="text-xl font-bold text-slate-900 mt-1">Team Clever Cast & Project Specifications</h2>
+          </div>
+          <div class="text-right">
+            <span class="text-xs font-bold text-slate-500">Problem Statement ID</span>
+            <div class="text-base font-extrabold text-slate-900 font-mono">SIH26195</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6 text-xs">
+          <div>
+            <span class="text-slate-400 font-semibold block uppercase text-[0.68rem]">Team Name</span>
+            <strong class="text-slate-900 text-sm">Clever Cast</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 font-semibold block uppercase text-[0.68rem]">Team ID</span>
+            <strong class="text-slate-900 text-sm font-mono">145830</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 font-semibold block uppercase text-[0.68rem]">Theme</span>
+            <strong class="text-emerald-800 text-sm">Clean & Green Technology</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 font-semibold block uppercase text-[0.68rem]">Category</span>
+            <strong class="text-slate-900 text-sm">Software (Student Innovation)</strong>
+          </div>
+        </div>
+
+        <!-- Slide 3 & 4 Core Synthesis -->
+        <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">
+          1. System Architecture & Feasibility (Slide 3 & 4)
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-700 mb-6">
+          <div class="bg-white p-4 rounded-lg border border-slate-200 space-y-2">
+            <h4 class="font-bold text-slate-900 text-sm">Feasibility: Can We Build It?</h4>
+            <ul class="list-disc pl-4 space-y-1.5 text-slate-600">
+              <li><strong>Zero Heavy Hardware at Donor End:</strong> Collects only basic operational data: food category, photo, quantity in servings/kg, cooking timestamp, GPS coordinates.</li>
+              <li><strong>API Lightweight:</strong> Runs on standard Google Maps Distance Matrix, OpenStreetMap PostGIS routing, and Twilio / Exotel SMS/Call IVR.</li>
+              <li><strong>Pre-existing Infrastructure:</strong> NGOs, volunteer transport, and decentralized biomethanizers already exist in major Indian municipal corridors.</li>
+              <li><strong>Rapid College Pilot:</strong> Can deploy within 2 weeks across college messes and nearby banquet halls.</li>
+            </ul>
+          </div>
+
+          <div class="bg-white p-4 rounded-lg border border-slate-200 space-y-2">
+            <h4 class="font-bold text-slate-900 text-sm">Viability: Will It Work Long Term?</h4>
+            <ul class="list-disc pl-4 space-y-1.5 text-slate-600">
+              <li><strong>Zero Raw Material Cost:</strong> Food is excess and free; solves donor disposal headache while earning goodwill and CSR credits.</li>
+              <li><strong>Sustainable Revenue Streams:</strong> Monetization through CSR partnerships (CGI India model), carbon credits, and tipping fee revenue share from biogas plants.</li>
+              <li><strong>Unique Closed-Loop Model:</strong> Solves hunger and landfill waste simultaneously rather than treating them in silos.</li>
+              <li><strong>Govt Alignment:</strong> Directly supports Swachh Bharat Mission (Urban 2.0) and national GOBARdhan goals.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Slide 6 Official Citations & Links -->
+        <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">
+          2. Official Research References & Whitepapers (Slide 6)
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          
+          <a href="https://www.cgi.com/india/en/article/esg/cgi-supports-offsetting-carbon-emissions-through-biogas" target="_blank" rel="noreferrer" class="p-3.5 rounded-lg border border-slate-200 hover:border-emerald-500 bg-white transition block group">
+            <div class="flex items-center justify-between">
+              <span class="text-[0.68rem] font-bold text-emerald-700 uppercase">CGI India ESG Initiative</span>
+              <span class="text-xs text-slate-400 group-hover:text-emerald-600">↗</span>
+            </div>
+            <h4 class="text-xs font-bold text-slate-900 mt-1">CGI Supports Offsetting Carbon Emissions Through Biogas Plants</h4>
+            <p class="text-[0.75rem] text-slate-500 mt-1">Deployments across Bengaluru & Chennai utilizing corporate CSR funding.</p>
+          </a>
+
+          <a href="https://hihindia.org/impact/stories/waste-to-energy" target="_blank" rel="noreferrer" class="p-3.5 rounded-lg border border-slate-200 hover:border-emerald-500 bg-white transition block group">
+            <div class="flex items-center justify-between">
+              <span class="text-[0.68rem] font-bold text-emerald-700 uppercase">Hand in Hand India</span>
+              <span class="text-xs text-slate-400 group-hover:text-emerald-600">↗</span>
+            </div>
+            <h4 class="text-xs font-bold text-slate-900 mt-1">Waste to Energy / Biogas-Waste2Energy Plant</h4>
+            <p class="text-[0.75rem] text-slate-500 mt-1">Pioneering municipal biomethanation facility in Pallavaram, Tamil Nadu.</p>
+          </a>
+
+          <a href="https://www.iimb.ac.in/node/4813" target="_blank" rel="noreferrer" class="p-3.5 rounded-lg border border-slate-200 hover:border-emerald-500 bg-white transition block group">
+            <div class="flex items-center justify-between">
+              <span class="text-[0.68rem] font-bold text-emerald-700 uppercase">IIM Bangalore Sustainability</span>
+              <span class="text-xs text-slate-400 group-hover:text-emerald-600">↗</span>
+            </div>
+            <h4 class="text-xs font-bold text-slate-900 mt-1">IIMB Commissions Biogas Plant Turning Waste into Wealth</h4>
+            <p class="text-[0.75rem] text-slate-500 mt-1">Canteen food waste anaerobic digestion producing clean kitchen cooking fuel.</p>
+          </a>
+
+          <a href="https://www.csir.res.in/en/csir-science-stories/csir-iicts-waste-wealth-technology-wins-pms-praise" target="_blank" rel="noreferrer" class="p-3.5 rounded-lg border border-slate-200 hover:border-emerald-500 bg-white transition block group">
+            <div class="flex items-center justify-between">
+              <span class="text-[0.68rem] font-bold text-emerald-700 uppercase">CSIR-IICT Science Story</span>
+              <span class="text-xs text-slate-400 group-hover:text-emerald-600">↗</span>
+            </div>
+            <h4 class="text-xs font-bold text-slate-900 mt-1">CSIR-IICT Anaerobic Gas-Lift Reactor (AGR) Technology</h4>
+            <p class="text-[0.75rem] text-slate-500 mt-1">Patented biomethanation process for high-moisture organic food waste.</p>
+          </a>
+
+          <a href="https://gobardhan.sbm.gov.in/plants-list" target="_blank" rel="noreferrer" class="p-3.5 rounded-lg border border-slate-200 hover:border-emerald-500 bg-white transition block group md:col-span-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[0.68rem] font-bold text-emerald-700 uppercase">Government of India &bull; Ministry of Jal Shakti</span>
+              <span class="text-xs text-slate-400 group-hover:text-emerald-600">↗</span>
+            </div>
+            <h4 class="text-xs font-bold text-slate-900 mt-1">GOBARdhan Unified Portal (Galvanizing Organic Bio-Agro Resources Dhan)</h4>
+            <p class="text-[0.75rem] text-slate-500 mt-1">National repository of CBG and decentralized biogas plants across India.</p>
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 py-6 px-4 text-xs text-slate-500 mt-auto">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <strong class="text-slate-800">ZERO WASTE – ZERO HUNGER</strong> &bull; SIH 2025 Student Innovation Entry (PS: SIH26195)
+        <p class="text-[0.7rem] text-slate-400 mt-0.5">Crafted by Team Clever Cast (Team ID: 145830) &bull; Clean & Green Technology Theme</p>
+      </div>
+      <div class="flex items-center gap-4 text-slate-600">
+        <span>Swachh Bharat Urban</span>
+        <span>&bull;</span>
+        <span>GOBARdhan Registered</span>
+        <span>&bull;</span>
+        <span>UN SDG 2 & 7 & 12 & 13</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: SIMULATED SMARTPHONE FOR TWILIO / EXOTEL IVR & SMS DISPATCH -->
+  <!-- ========================================================================= -->
+  <div id="phoneSimulatorModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-5 border border-slate-200">
+      
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+        <div>
+          <span class="text-[0.65rem] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 uppercase">
+            Slide 2 & 3 Dispatch Preview
+          </span>
+          <h3 class="text-base font-bold text-slate-900 mt-0.5">Automated Multi-Channel Alert Gateway</h3>
+        </div>
+        <button onclick="window.closePhoneModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">
+          ✕
+        </button>
+      </div>
+
+      <!-- Controls for Modal Preview -->
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4 bg-slate-100 p-2 rounded-lg text-xs">
+        <div class="flex items-center gap-1">
+          <span class="text-slate-500 font-semibold mr-1">Channel:</span>
+          <button class="phone-mode-btn px-2.5 py-1 rounded font-bold text-xs bg-slate-800 text-white" data-mode="sms" onclick="window.setPhoneMode('sms')">
+            SMS Gateway
+          </button>
+          <button class="phone-mode-btn px-2.5 py-1 rounded font-bold text-xs bg-slate-200 text-slate-700" data-mode="voice" onclick="window.setPhoneMode('voice')">
+            Automated IVR Call
+          </button>
+        </div>
+
+        <div class="flex items-center gap-1">
+          <span class="text-slate-500 font-semibold mr-1">Language:</span>
+          <button class="phone-lang-btn px-2 py-0.5 rounded text-xs font-bold bg-emerald-700 text-white" data-lang="en" onclick="window.setPhoneLang('en')">
+            EN
+          </button>
+          <button class="phone-lang-btn px-2 py-0.5 rounded text-xs font-bold bg-slate-200 text-slate-700" data-lang="hi" onclick="window.setPhoneLang('hi')">
+            हिन्दी
+          </button>
+          <button class="phone-lang-btn px-2 py-0.5 rounded text-xs font-bold bg-slate-200 text-slate-700" data-lang="ta" onclick="window.setPhoneLang('ta')">
+            தமிழ்
+          </button>
+        </div>
+      </div>
+
+      <!-- Phone Shell Frame -->
+      <div class="flex justify-center">
+        <div class="phone-preview-shell">
+          <div class="phone-screen" id="phoneSimulatorScreen">
+            <!-- Rendered by app.js -->
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 text-center text-[0.7rem] text-slate-500">
+        Simulates Twilio / Exotel Voice API and regional SMS Gateway triggered when safe window &lt; 4 hours.
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastNotification" class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-start gap-3 max-w-sm border border-slate-700">
+    <div class="text-emerald-400 text-lg">✓</div>
+    <div>
+      <h5 id="toastTitle" class="text-xs font-bold text-white">Notification</h5>
+      <p id="toastMessage" class="text-xs text-slate-300 mt-0.5 leading-snug">Details of updated action.</p>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Application Scripts -->
+  <script src="data/mockData.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
