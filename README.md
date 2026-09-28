@@ -1,13 +1,3 @@
-# ZERO WASTE – ZERO HUNGER (SIH 2025)
-**Smart India Hackathon 2025 Submission**  
-- **Problem Statement ID:** `SIH26195` (Student Innovation)  
-- **Theme:** Clean & Green Technology  
-- **PS Category:** Software  
-- **Team ID:** `145830`  
-- **Team Name:** Clever Cast  
-
----
-
 ## 🌟 Core Breakthrough & Philosophy
 > **"Fit to Eat → Feed People | Waste → Generate Energy"**
 
